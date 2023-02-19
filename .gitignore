@@ -1,0 +1,5 @@
+*.ply
+*.off
+.DS_Store
+*.tiff
+*.hdf5
