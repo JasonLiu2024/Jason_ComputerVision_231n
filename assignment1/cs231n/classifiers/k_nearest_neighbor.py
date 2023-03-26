@@ -77,7 +77,7 @@ class KNearestNeighbor(object):
                 #####################################################################
                 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-                dists[i][j] = np.sum((X[i] - self.X_train[j])**2)
+                dists[i, j] = np.sqrt(np.sum(np.square(X[i] - self.X_train[j])))
 
                 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -101,7 +101,7 @@ class KNearestNeighbor(object):
             #######################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            dists[i, :] = np.sqrt(np.sum(np.square(X[i] - self.X_train), axis = 1))
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -130,8 +130,16 @@ class KNearestNeighbor(object):
         #       and two broadcast sums.                                         #
         #########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
-        pass
+        # X is (num_test, D)
+        # X_train is (num_train, D)
+        # want: dists = (num_test, num_train)
+        # L2 = ||A - B|| = A^2 - 2*A*B + B^2
+        # sum squares by col
+        test_sq = np.sum(np.square(X), axis=1).reshape(num_test,1) 
+        # sum squares by row
+        train_sq = np.sum(np.square(self.X_train), axis=1).reshape(1,num_train) 
+        test_times_dist = np.dot(X, np.transpose(self.X_train))
+        dists = np.sqrt(test_sq - 2 * test_times_dist + train_sq)
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -164,7 +172,13 @@ class KNearestNeighbor(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            '''chooseFrom = dists[i,:]
+            chooseFrom_sortedIndices = np.argsort(chooseFrom)
+            chooseFrom_sortedIndices_firstK = chooseFrom_sortedIndices[0:k]
+            nearestKNeighhbors = np.take(self.y_train, chooseFrom_sortedIndices_firstK)
+            closest_y.extend(nearestKNeighhbors)'''
+            # replaced by the following:
+            closest_y = self.y_train[np.argsort(dists[i,:])[0:k]]
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             #########################################################################
@@ -176,7 +190,12 @@ class KNearestNeighbor(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            # added default=0 to max() and min() because, input list maybe empty
+            '''labels, counts = np.unique(closest_y, return_counts=True)
+            most_frequent = labels[counts == max(counts, default=0)]
+            y_pred[i] = min(most_frequent, default = 0)'''
+            # replaced by following:
+            y_pred[i] = np.argmax(np.bincount(closest_y))
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
