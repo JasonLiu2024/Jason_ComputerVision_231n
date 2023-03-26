@@ -7,6 +7,12 @@ In this project, I learn from 231n course from Stanford University. I watch lect
 ><br>Watched lectures 1 and 2
 ><br>Completed NearestNeighborClassifieR.ipynb
 
+<br>Winter Break
+>Finished all video courses on youtube! (videos from 2017)
+
+<br>230325
+>started working on assignment 1! (from 2022)
+
 # High Level Design
 # Files
 <br>1. NearestNeighborClassifieR.ipynb
